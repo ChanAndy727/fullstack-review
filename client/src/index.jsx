@@ -12,18 +12,21 @@ class App extends React.Component {
       repos: []
     }
   }
+  componentDidMount() {
+    axios.get('/repos')
+      .then((data)=>{
+        console.log(data);
+        this.setState({
+          repos: data.data
+        })
+      })
+  }
 
   search (term) {
     console.log(`${term} was searched`);
-    axios.post('/repos', {term: term})
-      .then((data) => {
-        res.json(data);
-      })
-      .catch((err) => {
-        console.log(err)
-      });
+    axios.post('/repos', {term: term}) //does this return a promise?
 
-    axios.get('/repos');
+     //do we pass repos as param {repo: this.state.repos}
   }
 
   render () {

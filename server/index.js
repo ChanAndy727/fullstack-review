@@ -12,7 +12,7 @@ app.post('/repos', function (req, res) {
   helpers.getReposByUsername(req.body.term)
   .then((res) => {
     res.forEach((obj) => {
-      db.save(obj);
+      db.save(obj); //what happens if we return this?
     })
   })
   .catch((err) => {
@@ -35,10 +35,16 @@ app.post('/repos', function (req, res) {
 
 
 app.get('/repos', function (req, res) {
-  console.log('you are hitting get.', req.body);
-  // TODO - your code here!
+  // console.log('you are hitting get.', req);
+  // // TODO - your code here!
   // This route should send back the top 25 repos
-  res.send(req.body);
+  db.topRepos((err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(data);
+    }
+  });
 });
 
 let port = 1128;

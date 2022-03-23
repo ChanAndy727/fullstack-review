@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
-require('mongoose-type-url');
+
 mongoose.connect('mongodb://localhost/fetcher');
 
 let repoSchema = mongoose.Schema({
-  id: Number,
+  id: {
+    type: Number,
+    unique: true
+  },
   user: String,
-  url: mongoose.SchemaTypes.Url,
+  url: String,
   forks: Number
 });
 
@@ -22,16 +25,21 @@ let save = (repo) => {
     url: repo.url,
     forks: repo.forks_count
   })
-  // currRepo.save();
-  Repo.findByIdAndUpdate(repo.id, currRepo, { upsert: true });
-  // Repo.findOneAndUpdate(
-  //   {id: currRepo.id}, currRepo, {upsert: true}, (err,res) => {
-  //     if (err) {
-  //       return res.send(500, {err: err})
-  //     }
-  //     return res.send('success!')
-  //   })
-
+  currRepo.save();
 }
-module.exports.save = save;
+
+let topRepos = (cb) => {
+  Repo.find().sort('-forks').limit(25).exec((err,data)=>{
+    if (err){
+      cb(err,null);
+    } else {
+      cb(null, data);
+    }
+  })
+}
+
+module.exports = {
+  save,
+  topRepos
+}
 // module.exports.save = save;
